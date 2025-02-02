@@ -2,6 +2,7 @@ package openai
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 )
 
@@ -89,6 +90,53 @@ func (c *Client) CreateChatCompletionStream(
 		http.MethodPost,
 		c.fullURL(urlSuffix, withModel(request.Model)),
 		withBody(request),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := sendRequestStream[ChatCompletionStreamResponse](c, req)
+	if err != nil {
+		return
+	}
+	stream = &ChatCompletionStream{
+		streamReader: resp,
+	}
+	return
+}
+
+func (c *Client) CreateChatCompletionStreamCustomBody(
+	ctx context.Context,
+	body map[string]interface{},
+) (stream *ChatCompletionStream, err error) {
+
+	request := ChatCompletionRequest{}
+	// projecting custom body to standard struct
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(bodyBytes, &request)
+	if err != nil {
+		return nil, err
+	}
+
+	urlSuffix := chatCompletionsSuffix
+	if !checkEndpointSupportsModel(urlSuffix, request.Model) {
+		err = ErrChatCompletionInvalidModel
+		return
+	}
+
+	request.Stream = true
+	if err = validateRequestForO1Models(request); err != nil {
+		return
+	}
+
+	req, err := c.newRequest(
+		ctx,
+		http.MethodPost,
+		c.fullURL(urlSuffix, withModel(request.Model)),
+		withBody(body),
 	)
 	if err != nil {
 		return nil, err
