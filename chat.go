@@ -264,7 +264,7 @@ type ChatCompletionRequest struct {
 	Metadata map[string]string `json:"metadata,omitempty"`
 
 	// Custom fields for OpenRouter
-	Provider map[string]string `json:"provider,omitempty"`
+	Provider map[string]interface{} `json:"provider,omitempty"`
 }
 
 type StreamOptions struct {
