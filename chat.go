@@ -132,7 +132,7 @@ func (m ChatCompletionMessage) MarshalJSON() ([]byte, error) {
 
 	msg := struct {
 		Role         string            `json:"role"`
-		Content      string            `json:"content,omitempty"`
+		Content      string            `json:"content"`
 		Refusal      string            `json:"refusal,omitempty"`
 		MultiContent []ChatMessagePart `json:"-"`
 		Name         string            `json:"name,omitempty"`
