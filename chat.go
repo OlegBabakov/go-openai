@@ -256,7 +256,8 @@ type ChatCompletionRequestExtensions struct {
 	// is used to constrain the model's responses to a controlled set of options,
 	// ensuring predictable and consistent outputs in scenarios where specific
 	// choices are required.
-	GuidedChoice []string `json:"guided_choice,omitempty"`
+	GuidedChoice []string               `json:"guided_choice,omitempty"`
+	Provider     map[string]interface{} `json:"provider,omitempty"`
 }
 
 // ChatCompletionRequest represents a request structure for chat completion API.
